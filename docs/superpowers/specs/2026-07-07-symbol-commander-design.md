@@ -74,9 +74,9 @@ Thin OS-facing shell:
 - **Action executor**
   - Keystroke: `SendInput` scan-code sequences (recorded via a keystroke-recorder box).
   - Launch: `Process.Start` with UseShellExecute (apps, files, folders, URLs).
-  - WindowMedia: `ShowWindow`/`SC_*` messages for minimize/maximize/close/restore/snap
-    of the foreground window; `APPCOMMAND` messages for volume/mute/play-pause/next/prev;
-    `LockWorkStation` for lock.
+  - WindowMedia: `ShowWindow`/`SC_*` messages for minimize/maximize/close/restore of
+    the foreground window; snap left/right via simulated Win+Arrow keystrokes;
+    `APPCOMMAND` messages for volume/mute/play-pause/next/prev; `LockWorkStation` for lock.
   - Shell: `Process.Start` of the configured command line, non-elevated, hidden or
     visible per action setting. Failures toast, never crash.
 - **Settings window** — three tabs:
