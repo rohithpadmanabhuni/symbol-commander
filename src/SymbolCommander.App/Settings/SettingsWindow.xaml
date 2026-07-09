@@ -14,7 +14,9 @@
             <TabItem Header="Bindings">
                 <local:BindingsTab x:Name="Bindings"/>
             </TabItem>
-            <!-- Task 16 inserts the Symbols TabItem here -->
+            <TabItem Header="Symbols">
+                <local:SymbolsTab x:Name="Symbols"/>
+            </TabItem>
             <TabItem Header="Actions &amp; General">
                 <local:GeneralTab x:Name="General"/>
             </TabItem>

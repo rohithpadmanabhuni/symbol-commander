@@ -19,7 +19,7 @@ public partial class SettingsWindow : Window
         Working = coordinator.CurrentConfig.Clone();
         General.Load(this);
         Bindings.Load(this);
-        // Task 16 adds: Symbols.Load(this);
+        Symbols.Load(this);
     }
 
     public void ApplyWorking()
@@ -38,8 +38,8 @@ public partial class SettingsWindow : Window
     {
         if (!ReferenceEquals(e.Source, Tabs)) return;
         if (Tabs.SelectedItem is TabItem { Content: BindingsTab bt }) bt.Reload();
+        else if (Tabs.SelectedItem is TabItem { Content: SymbolsTab st }) st.Reload();
         else if (Tabs.SelectedItem is TabItem { Content: GeneralTab gt }) gt.Reload();
-        // Task 16 adds the SymbolsTab case here
     }
 
     private void Ok_Click(object sender, RoutedEventArgs e) { ApplyWorking(); Close(); }
