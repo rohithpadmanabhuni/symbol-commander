@@ -2,3 +2,6 @@ bin/
 obj/
 *.user
 publish/
+
+# raw voice-pack archive (extracted clips get embedded deliberately during the voice feature)
+English Female Voice.zip
