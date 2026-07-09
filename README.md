@@ -17,6 +17,23 @@ windows and media, run commands.
 
 Config lives in `%APPDATA%\SymbolCommander`. Portable: a single exe, no installer.
 
+## Voice feedback
+
+Actions can speak when they fire, Sensiva-style. Voice is on by default
+(toggle in Settings → Actions & General, or the tray menu; volume slider in settings).
+
+- **Original clips:** Settings → "Import folder…" and point at your extracted
+  "English Female Voice" pack (the original zip is LZMA-compressed, which .NET can't
+  read — extract it first; "Import zip…" works for ordinary zips). Clips land in
+  `%APPDATA%\SymbolCommander\voice\`; "The Sensiva Sound" becomes the startup jingle.
+- **Auto matching:** an action picks the clip whose name appears in the action's name
+  ("Minimize window" → minimize.mp3). No match → a sample is generated once with
+  Windows TTS and reused.
+- **Per action:** the action editor's Voice row lets you pick any clip, generate a
+  TTS sample, add your own .mp3/.wav, preview, or silence that action.
+
+No copyrighted audio ships with the app or this repo.
+
 ## Default bindings
 
 | Symbol | Action |
