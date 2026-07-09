@@ -18,13 +18,15 @@ public partial class SettingsWindow : Window
         Store = store;
         Working = coordinator.CurrentConfig.Clone();
         General.Load(this);
-        // Tasks 15/16 add: Bindings.Load(this); Symbols.Load(this);
+        Bindings.Load(this);
+        // Task 16 adds: Symbols.Load(this);
     }
 
     public void ApplyWorking()
     {
         General.CollectInto(Working);
-        // Tasks 15/16 add: Bindings.CollectInto(Working); (Symbols tab saves customs directly)
+        Bindings.CollectInto(Working);
+        // Task 16: Symbols tab saves customs directly, no CollectInto needed
         var snapshot = Working.Clone();
         Store.Save(snapshot);
         Coordinator.ApplyConfig(snapshot, Store.LoadCustomSymbols());
@@ -35,8 +37,9 @@ public partial class SettingsWindow : Window
     private void Tabs_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
         if (!ReferenceEquals(e.Source, Tabs)) return;
-        // Tasks 15/16 add per-tab Reload() calls here
-        General.Reload();
+        if (Tabs.SelectedItem is TabItem { Content: BindingsTab bt }) bt.Reload();
+        else if (Tabs.SelectedItem is TabItem { Content: GeneralTab gt }) gt.Reload();
+        // Task 16 adds the SymbolsTab case here
     }
 
     private void Ok_Click(object sender, RoutedEventArgs e) { ApplyWorking(); Close(); }

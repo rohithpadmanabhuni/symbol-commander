@@ -11,7 +11,10 @@
             <Button Content="Apply" Width="80" Margin="4" Click="Apply_Click"/>
         </StackPanel>
         <TabControl x:Name="Tabs" SelectionChanged="Tabs_SelectionChanged">
-            <!-- Tasks 15/16 insert Bindings and Symbols TabItems BEFORE this one -->
+            <TabItem Header="Bindings">
+                <local:BindingsTab x:Name="Bindings"/>
+            </TabItem>
+            <!-- Task 16 inserts the Symbols TabItem here -->
             <TabItem Header="Actions &amp; General">
                 <local:GeneralTab x:Name="General"/>
             </TabItem>
