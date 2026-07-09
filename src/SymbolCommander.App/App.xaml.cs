@@ -59,10 +59,18 @@ public partial class App : System.Windows.Application
         waiter.Start();
     }
 
+    private Settings.SettingsWindow? _settingsWindow;
+
     private void OpenSettings()
     {
-        // Task 13 replaces this with the real settings window
-        Tray.ShowNotification("Symbol Commander", "Settings UI arrives in a later task.");
+        if (_settingsWindow is { IsLoaded: true })
+        {
+            _settingsWindow.Activate();
+            return;
+        }
+        _settingsWindow = new Settings.SettingsWindow(Coordinator, ConfigStore);
+        _settingsWindow.Closed += (_, _) => _settingsWindow = null;
+        _settingsWindow.Show();
     }
 
     protected override void OnExit(ExitEventArgs e)
