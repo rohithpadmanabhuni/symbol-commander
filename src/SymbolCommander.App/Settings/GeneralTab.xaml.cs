@@ -1,4 +1,6 @@
+using System.Windows;
 using System.Windows.Controls;
+using SymbolCommander.Core.Actions;
 using SymbolCommander.Core.Config;
 
 namespace SymbolCommander.App.Settings;
@@ -53,6 +55,47 @@ public partial class GeneralTab : UserControl
         s.GesturesEnabled = EnabledCheck.IsChecked == true;
     }
 
-    // Task 14 adds the Actions list logic (RefreshActions + Add/Edit/Remove handlers).
-    private void RefreshActions() { }
+    private sealed record ActionRow(ActionDefinition Action)
+    {
+        public string Display => $"{Action.Name}  ({Action.Type})";
+    }
+
+    private void RefreshActions()
+    {
+        ActionsList.Items.Clear();
+        foreach (var a in _owner.Working.Actions) ActionsList.Items.Add(new ActionRow(a));
+    }
+
+    private void AddAction_Click(object sender, RoutedEventArgs e)
+    {
+        var dlg = new ActionEditorDialog(null) { Owner = Window.GetWindow(this) };
+        if (dlg.ShowDialog() == true && dlg.Result is { } action)
+        {
+            _owner.Working.Actions.Add(action);
+            RefreshActions();
+        }
+    }
+
+    private void EditAction_Click(object sender, RoutedEventArgs e)
+    {
+        if (ActionsList.SelectedItem is not ActionRow row) return;
+        var dlg = new ActionEditorDialog(row.Action) { Owner = Window.GetWindow(this) };
+        if (dlg.ShowDialog() == true && dlg.Result is { } edited)
+        {
+            var i = _owner.Working.Actions.FindIndex(a => a.Id == edited.Id);
+            if (i >= 0) _owner.Working.Actions[i] = edited;
+            RefreshActions();
+        }
+    }
+
+    private void RemoveAction_Click(object sender, RoutedEventArgs e)
+    {
+        if (ActionsList.SelectedItem is not ActionRow row) return;
+        int used = _owner.Working.Bindings.RemoveAll(b => b.ActionId == row.Action.Id);
+        if (used > 0)
+            MessageBox.Show($"Also removed {used} binding(s) that used \"{row.Action.Name}\".",
+                "Symbol Commander", MessageBoxButton.OK, MessageBoxImage.Information);
+        _owner.Working.Actions.Remove(row.Action);
+        RefreshActions();
+    }
 }

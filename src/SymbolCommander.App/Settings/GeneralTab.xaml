@@ -38,7 +38,16 @@
                     <CheckBox x:Name="EnabledCheck" Content="Gestures enabled" Margin="0,2"/>
                 </StackPanel>
             </GroupBox>
-            <!-- Task 14 inserts the Actions GroupBox here -->
+            <GroupBox Header="Actions" Padding="8" Margin="0,8,0,0">
+                <DockPanel>
+                    <StackPanel DockPanel.Dock="Right" Margin="8,0,0,0">
+                        <Button Content="Add…" Width="80" Margin="0,2" Click="AddAction_Click"/>
+                        <Button Content="Edit…" Width="80" Margin="0,2" Click="EditAction_Click"/>
+                        <Button Content="Remove" Width="80" Margin="0,2" Click="RemoveAction_Click"/>
+                    </StackPanel>
+                    <ListBox x:Name="ActionsList" Height="160" DisplayMemberPath="Display"/>
+                </DockPanel>
+            </GroupBox>
         </StackPanel>
     </ScrollViewer>
 </UserControl>
