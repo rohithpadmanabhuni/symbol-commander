@@ -1,0 +1,15 @@
+<Window x:Class="SymbolCommander.App.Overlay.OverlayWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        WindowStyle="None" AllowsTransparency="True" Background="Transparent"
+        Topmost="True" ShowInTaskbar="False" ShowActivated="False"
+        IsHitTestVisible="False" Focusable="False">
+    <Canvas x:Name="RootCanvas">
+        <Polyline x:Name="Trail" StrokeLineJoin="Round" StrokeStartLineCap="Round"
+                  StrokeEndLineCap="Round" Visibility="Collapsed" />
+        <Border x:Name="Toast" Visibility="Collapsed" Background="#DD222222" CornerRadius="6"
+                Padding="12,6">
+            <TextBlock x:Name="ToastText" Foreground="White" FontSize="16" FontWeight="SemiBold" />
+        </Border>
+    </Canvas>
+</Window>

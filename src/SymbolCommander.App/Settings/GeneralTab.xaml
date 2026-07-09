@@ -1,0 +1,53 @@
+<UserControl x:Class="SymbolCommander.App.Settings.GeneralTab"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <StackPanel Margin="12" x:Name="Root">
+            <GroupBox Header="Triggers" Padding="8">
+                <StackPanel>
+                    <CheckBox x:Name="RightButtonCheck" Content="Hold right mouse button and draw" Margin="0,2"/>
+                    <StackPanel Orientation="Horizontal" Margin="0,2">
+                        <CheckBox x:Name="HotkeyCheck" Content="Hold hotkey and draw (trackpad-friendly):"
+                                  VerticalAlignment="Center"/>
+                        <ComboBox x:Name="HotkeyCombo" Width="140" Margin="8,0,0,0"/>
+                    </StackPanel>
+                </StackPanel>
+            </GroupBox>
+            <GroupBox Header="Recognition" Padding="8" Margin="0,8,0,0">
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="Sensitivity:" VerticalAlignment="Center"/>
+                    <Slider x:Name="SensitivitySlider" Width="220" Minimum="0.5" Maximum="0.95"
+                            TickFrequency="0.05" IsSnapToTickEnabled="True" Margin="8,0"/>
+                    <TextBlock x:Name="SensitivityLabel" VerticalAlignment="Center" Width="40"/>
+                    <TextBlock Text="(higher = stricter matching)" VerticalAlignment="Center" Foreground="Gray"/>
+                </StackPanel>
+            </GroupBox>
+            <GroupBox Header="Trail" Padding="8" Margin="0,8,0,0">
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="Color:" VerticalAlignment="Center"/>
+                    <ComboBox x:Name="TrailColorCombo" Width="110" Margin="8,0"
+                              SelectedValuePath="Tag" DisplayMemberPath="Content"/>
+                    <TextBlock Text="Thickness:" VerticalAlignment="Center" Margin="16,0,0,0"/>
+                    <Slider x:Name="ThicknessSlider" Width="140" Minimum="2" Maximum="8"
+                            TickFrequency="1" IsSnapToTickEnabled="True" Margin="8,0"/>
+                </StackPanel>
+            </GroupBox>
+            <GroupBox Header="System" Padding="8" Margin="0,8,0,0">
+                <StackPanel>
+                    <CheckBox x:Name="StartupCheck" Content="Start with Windows" Margin="0,2"/>
+                    <CheckBox x:Name="EnabledCheck" Content="Gestures enabled" Margin="0,2"/>
+                </StackPanel>
+            </GroupBox>
+            <GroupBox Header="Actions" Padding="8" Margin="0,8,0,0">
+                <DockPanel>
+                    <StackPanel DockPanel.Dock="Right" Margin="8,0,0,0">
+                        <Button Content="Add…" Width="80" Margin="0,2" Click="AddAction_Click"/>
+                        <Button Content="Edit…" Width="80" Margin="0,2" Click="EditAction_Click"/>
+                        <Button Content="Remove" Width="80" Margin="0,2" Click="RemoveAction_Click"/>
+                    </StackPanel>
+                    <ListBox x:Name="ActionsList" Height="160" DisplayMemberPath="Display"/>
+                </DockPanel>
+            </GroupBox>
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>
