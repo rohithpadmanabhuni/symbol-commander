@@ -47,10 +47,12 @@ public partial class SymbolsTab : UserControl
         if (MessageBox.Show(msg, "Symbol Commander", MessageBoxButton.YesNo, MessageBoxImage.Question)
             != MessageBoxResult.Yes) return;
 
-        _owner.Working.Bindings.RemoveAll(b => b.SymbolId == symbol.Id);
+        bool removedBinding = _owner.Working.Bindings.RemoveAll(b => b.SymbolId == symbol.Id) > 0;
         _owner.Store.DeleteCustomSymbol(symbol.Id);
         Reload();
         // stop matching the deleted symbol immediately, mirroring New_Click
         _owner.Coordinator.ApplyConfig(_owner.Coordinator.CurrentConfig, _owner.Store.LoadCustomSymbols());
+        // the in-memory binding removal is only persisted on Apply/OK
+        if (removedBinding) _owner.MarkDirty();
     }
 }

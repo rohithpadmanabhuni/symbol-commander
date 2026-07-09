@@ -21,6 +21,16 @@ public partial class GeneralTab : UserControl
         TrailColorCombo.Items.Add(new ComboBoxItem { Content = "Orange", Tag = "#E67E22" });
         TrailColorCombo.Items.Add(new ComboBoxItem { Content = "Purple", Tag = "#9B59B6" });
         SensitivitySlider.ValueChanged += (_, _) => SensitivityLabel.Text = SensitivitySlider.Value.ToString("0.00");
+
+        // Any user edit lights up the Apply button (suppressed during Load via the owner).
+        RightButtonCheck.Click += (_, _) => _owner?.MarkDirty();
+        HotkeyCheck.Click += (_, _) => _owner?.MarkDirty();
+        StartupCheck.Click += (_, _) => _owner?.MarkDirty();
+        EnabledCheck.Click += (_, _) => _owner?.MarkDirty();
+        HotkeyCombo.SelectionChanged += (_, _) => _owner?.MarkDirty();
+        TrailColorCombo.SelectionChanged += (_, _) => _owner?.MarkDirty();
+        SensitivitySlider.ValueChanged += (_, _) => _owner?.MarkDirty();
+        ThicknessSlider.ValueChanged += (_, _) => _owner?.MarkDirty();
     }
 
     public void Load(SettingsWindow owner)
@@ -73,6 +83,7 @@ public partial class GeneralTab : UserControl
         {
             _owner.Working.Actions.Add(action);
             RefreshActions();
+            _owner.MarkDirty();
         }
     }
 
@@ -85,6 +96,7 @@ public partial class GeneralTab : UserControl
             var i = _owner.Working.Actions.FindIndex(a => a.Id == edited.Id);
             if (i >= 0) _owner.Working.Actions[i] = edited;
             RefreshActions();
+            _owner.MarkDirty();
         }
     }
 
@@ -97,5 +109,6 @@ public partial class GeneralTab : UserControl
                 "Symbol Commander", MessageBoxButton.OK, MessageBoxImage.Information);
         _owner.Working.Actions.Remove(row.Action);
         RefreshActions();
+        _owner.MarkDirty();
     }
 }

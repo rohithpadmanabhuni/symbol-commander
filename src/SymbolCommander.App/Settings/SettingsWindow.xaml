@@ -8,7 +8,7 @@
         <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal" HorizontalAlignment="Right" Margin="8">
             <Button Content="OK" Width="80" Margin="4" Click="Ok_Click"/>
             <Button Content="Cancel" Width="80" Margin="4" Click="Cancel_Click"/>
-            <Button Content="Apply" Width="80" Margin="4" Click="Apply_Click"/>
+            <Button x:Name="ApplyButton" Content="Apply" Width="80" Margin="4" IsEnabled="False" Click="Apply_Click"/>
         </StackPanel>
         <TabControl x:Name="Tabs" SelectionChanged="Tabs_SelectionChanged">
             <TabItem Header="Bindings">

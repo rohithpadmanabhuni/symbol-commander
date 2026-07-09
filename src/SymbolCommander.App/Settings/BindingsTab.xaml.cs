@@ -39,6 +39,15 @@ public partial class BindingsTab : UserControl
         InitializeComponent();
         BindingsGrid.ItemsSource = _rows;
         TestCanvas.StrokeDrawn += OnTestStroke;
+        // adding/removing binding rows is a user edit (suppressed during Reload via the owner)
+        _rows.CollectionChanged += (_, _) => _owner?.MarkDirty();
+    }
+
+    private BindingRow TrackedRow(BindingRow row)
+    {
+        // editing a row's symbol/action/enabled is a user edit
+        row.PropertyChanged += (_, _) => _owner?.MarkDirty();
+        return row;
     }
 
     public void Load(SettingsWindow owner)
@@ -57,8 +66,8 @@ public partial class BindingsTab : UserControl
         var actions = _owner.Working.Actions.Select(a => new Choice(a.Id, a.Name)).ToList();
         _rows.Clear();
         foreach (var b in _owner.Working.Bindings)
-            _rows.Add(new BindingRow { Symbols = symbols, Actions = actions,
-                SymbolId = b.SymbolId, ActionId = b.ActionId, Enabled = b.Enabled });
+            _rows.Add(TrackedRow(new BindingRow { Symbols = symbols, Actions = actions,
+                SymbolId = b.SymbolId, ActionId = b.ActionId, Enabled = b.Enabled }));
     }
 
     public void CollectInto(AppConfig working)
@@ -72,7 +81,7 @@ public partial class BindingsTab : UserControl
     {
         var symbols = _catalog.All.Select(s => new Choice(s.Id, s.IsBuiltIn ? s.Name : $"{s.Name} (custom)")).ToList();
         var actions = _owner.Working.Actions.Select(a => new Choice(a.Id, a.Name)).ToList();
-        _rows.Add(new BindingRow { Symbols = symbols, Actions = actions });
+        _rows.Add(TrackedRow(new BindingRow { Symbols = symbols, Actions = actions }));
     }
 
     private void Remove_Click(object sender, RoutedEventArgs e)
