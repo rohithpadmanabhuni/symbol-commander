@@ -119,4 +119,49 @@ public class ConfigStoreTests : IDisposable
         Assert.NotEqual(0.11, config.Settings.Sensitivity);
         Assert.NotEqual("mutated", config.Actions[0].Name);
     }
+
+    [Fact]
+    public void Voice_fields_round_trip()
+    {
+        var store = new ConfigStore(_dir);
+        var config = ConfigStore.DefaultConfig();
+        config.Settings.VoiceEnabled = false;
+        config.Settings.VoiceVolume = 0.35;
+        config.Actions[0].Voice = "minimize.mp3";
+        config.Actions[1].Voice = "none";
+        store.Save(config);
+
+        var loaded = new ConfigStore(_dir).Load();
+        Assert.False(loaded.Settings.VoiceEnabled);
+        Assert.Equal(0.35, loaded.Settings.VoiceVolume);
+        Assert.Equal("minimize.mp3", loaded.Actions[0].Voice);
+        Assert.Equal("none", loaded.Actions[1].Voice);
+        Assert.Equal("", loaded.Actions[2].Voice); // untouched action defaults to Auto
+    }
+
+    [Fact]
+    public void Pre_voice_config_loads_with_voice_defaults()
+    {
+        // a v0.1.x config knows nothing about voice fields
+        Directory.CreateDirectory(_dir);
+        File.WriteAllText(Path.Combine(_dir, "config.json"), """
+        {
+          "SchemaVersion": 1,
+          "Settings": { "GesturesEnabled": true, "Sensitivity": 0.8 },
+          "Actions": [ { "Id": "a1", "Name": "Undo", "Type": "Keystroke",
+                         "Parameters": { "keys": "Ctrl+Z" } } ],
+          "Bindings": [ { "SymbolId": "z", "ActionId": "a1", "Enabled": true } ]
+        }
+        """);
+        var loaded = new ConfigStore(_dir).Load();
+        Assert.True(loaded.Settings.VoiceEnabled);
+        Assert.Equal(0.8, loaded.Settings.VoiceVolume);
+        Assert.Equal("", loaded.Actions[0].Voice);
+    }
+
+    [Fact]
+    public void Store_exposes_its_directory()
+    {
+        Assert.Equal(_dir, new ConfigStore(_dir).Directory);
+    }
 }

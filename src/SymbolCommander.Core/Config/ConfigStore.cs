@@ -16,9 +16,14 @@ public sealed class ConfigStore
     private string SymbolsDir => Path.Combine(_dir, "symbols");
 
     public string ConfigPath => Path.Combine(_dir, "config.json");
+    public string Directory { get; }
     public event Action<string>? LoadWarning;
 
-    public ConfigStore(string directory) => _dir = directory;
+    public ConfigStore(string directory)
+    {
+        _dir = directory;
+        Directory = directory;
+    }
 
     public AppConfig Load()
     {
@@ -39,7 +44,7 @@ public sealed class ConfigStore
 
     public void Save(AppConfig config)
     {
-        Directory.CreateDirectory(_dir);
+        System.IO.Directory.CreateDirectory(_dir);
         var tmp = ConfigPath + ".tmp";
         File.WriteAllText(tmp, JsonSerializer.Serialize(config, JsonOptions));
         File.Move(tmp, ConfigPath, overwrite: true);
@@ -48,8 +53,8 @@ public sealed class ConfigStore
     public List<CustomSymbol> LoadCustomSymbols()
     {
         var result = new List<CustomSymbol>();
-        if (!Directory.Exists(SymbolsDir)) return result;
-        foreach (var file in Directory.GetFiles(SymbolsDir, "*.json"))
+        if (!System.IO.Directory.Exists(SymbolsDir)) return result;
+        foreach (var file in System.IO.Directory.GetFiles(SymbolsDir, "*.json"))
         {
             try
             {
@@ -66,7 +71,7 @@ public sealed class ConfigStore
 
     public void SaveCustomSymbol(CustomSymbol s)
     {
-        Directory.CreateDirectory(SymbolsDir);
+        System.IO.Directory.CreateDirectory(SymbolsDir);
         var path = Path.Combine(SymbolsDir, s.Id + ".json");
         var tmp = path + ".tmp";
         File.WriteAllText(tmp, JsonSerializer.Serialize(s, JsonOptions));
