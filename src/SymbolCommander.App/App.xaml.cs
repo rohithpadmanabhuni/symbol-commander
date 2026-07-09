@@ -1,6 +1,8 @@
 using System.IO;
 using System.Threading;
 using System.Windows;
+using SymbolCommander.App.Engine;
+using SymbolCommander.App.Overlay;
 using SymbolCommander.App.Tray;
 using SymbolCommander.Core.Config;
 
@@ -17,6 +19,8 @@ public partial class App : System.Windows.Application
     public static new App Current => (App)System.Windows.Application.Current;
     public ConfigStore ConfigStore { get; private set; } = null!;
     public TrayIcon Tray { get; private set; } = null!;
+    public GestureCoordinator Coordinator { get; private set; } = null!;
+    public OverlayWindow Overlay { get; private set; } = null!;
 
     protected override void OnStartup(StartupEventArgs e)
     {
@@ -24,7 +28,6 @@ public partial class App : System.Windows.Application
         _showSettingsEvent = new EventWaitHandle(false, EventResetMode.AutoReset, ShowSettingsEventName);
         if (!isFirst)
         {
-            // another instance is running: ask it to open settings, then quit
             _showSettingsEvent.Set();
             Shutdown();
             return;
@@ -37,10 +40,17 @@ public partial class App : System.Windows.Application
         ConfigStore = new ConfigStore(configDir);
 
         Tray = new TrayIcon();
+        Overlay = new OverlayWindow();
+        Overlay.Show();
+
+        Coordinator = new GestureCoordinator(ConfigStore, Overlay, Tray.ShowNotification);
+        Coordinator.Start();
+        Tray.SetGesturesEnabled(Coordinator.CurrentConfig.Settings.GesturesEnabled);
+
         Tray.ExitRequested += Shutdown;
         Tray.SettingsRequested += OpenSettings;
+        Tray.GesturesToggled += on => Coordinator.SetGesturesEnabled(on);
 
-        // wake up when a second instance signals us
         var waiter = new Thread(() =>
         {
             while (_showSettingsEvent.WaitOne())
@@ -57,6 +67,7 @@ public partial class App : System.Windows.Application
 
     protected override void OnExit(ExitEventArgs e)
     {
+        Coordinator?.Dispose();
         Tray?.Dispose();
         _instanceMutex?.Dispose();
         base.OnExit(e);
