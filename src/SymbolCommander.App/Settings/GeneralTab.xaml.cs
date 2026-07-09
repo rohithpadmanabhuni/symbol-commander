@@ -2,6 +2,7 @@ using System.Windows;
 using System.Windows.Controls;
 using SymbolCommander.Core.Actions;
 using SymbolCommander.Core.Config;
+using SymbolCommander.Core.Voice;
 
 namespace SymbolCommander.App.Settings;
 
@@ -31,6 +32,8 @@ public partial class GeneralTab : UserControl
         TrailColorCombo.SelectionChanged += (_, _) => _owner?.MarkDirty();
         SensitivitySlider.ValueChanged += (_, _) => _owner?.MarkDirty();
         ThicknessSlider.ValueChanged += (_, _) => _owner?.MarkDirty();
+        VoiceCheck.Click += (_, _) => _owner?.MarkDirty();
+        VoiceVolumeSlider.ValueChanged += (_, _) => _owner?.MarkDirty();
     }
 
     public void Load(SettingsWindow owner)
@@ -47,6 +50,9 @@ public partial class GeneralTab : UserControl
         ThicknessSlider.Value = s.TrailThickness;
         StartupCheck.IsChecked = s.StartWithWindows;
         EnabledCheck.IsChecked = s.GesturesEnabled;
+        VoiceCheck.IsChecked = s.VoiceEnabled;
+        VoiceVolumeSlider.Value = s.VoiceVolume;
+        UpdateVoiceStatus();
         RefreshActions();
     }
 
@@ -63,7 +69,42 @@ public partial class GeneralTab : UserControl
         s.TrailThickness = ThicknessSlider.Value;
         s.StartWithWindows = StartupCheck.IsChecked == true;
         s.GesturesEnabled = EnabledCheck.IsChecked == true;
+        s.VoiceEnabled = VoiceCheck.IsChecked == true;
+        s.VoiceVolume = VoiceVolumeSlider.Value;
     }
+
+    private void ImportZip_Click(object sender, RoutedEventArgs e)
+    {
+        var dlg = new Microsoft.Win32.OpenFileDialog
+            { Filter = "Zip archives|*.zip", Title = "Import voice pack" };
+        if (dlg.ShowDialog(Window.GetWindow(this)) != true) return;
+        RunImport(() => VoicePackImporter.ImportZip(dlg.FileName, _owner.Coordinator.Voice.VoiceDir));
+    }
+
+    private void ImportFolder_Click(object sender, RoutedEventArgs e)
+    {
+        var dlg = new Microsoft.Win32.OpenFolderDialog { Title = "Import voice pack folder" };
+        if (dlg.ShowDialog(Window.GetWindow(this)) != true) return;
+        RunImport(() => VoicePackImporter.ImportFolder(dlg.FolderName, _owner.Coordinator.Voice.VoiceDir));
+    }
+
+    private void RunImport(Func<int> import)
+    {
+        try
+        {
+            int n = import();
+            UpdateVoiceStatus();
+            MessageBox.Show($"Imported {n} voice sample(s).", "Symbol Commander",
+                MessageBoxButton.OK, MessageBoxImage.Information);
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show(ex.Message, "Import failed", MessageBoxButton.OK, MessageBoxImage.Warning);
+        }
+    }
+
+    private void UpdateVoiceStatus() =>
+        VoiceStatusLabel.Text = $"{_owner.Coordinator.Voice.AvailableFiles().Count} voice samples available";
 
     private sealed record ActionRow(ActionDefinition Action)
     {

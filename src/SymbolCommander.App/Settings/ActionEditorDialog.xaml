@@ -31,6 +31,16 @@
             <CheckBox x:Name="HiddenCheck" Content="Run hidden (no console window)" IsChecked="True" Margin="0,0,0,8"/>
         </StackPanel>
 
+        <TextBlock Text="Voice:"/>
+        <DockPanel Margin="0,2,0,8">
+            <Button DockPanel.Dock="Right" Content="Add file…" Width="80" Margin="6,0,0,0" Click="AddVoiceFile_Click"/>
+            <Button DockPanel.Dock="Right" Content="TTS" Width="46" Margin="6,0,0,0" Click="GenerateTts_Click"
+                    ToolTip="Generate a spoken sample from the action name"/>
+            <Button DockPanel.Dock="Right" Content="▶" Width="32" Margin="6,0,0,0" Click="PreviewVoice_Click"
+                    ToolTip="Preview"/>
+            <ComboBox x:Name="VoiceCombo"/>
+        </DockPanel>
+
         <TextBlock x:Name="ErrorLabel" Foreground="Firebrick" TextWrapping="Wrap" Visibility="Collapsed"/>
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,8,0,0">
             <Button Content="OK" Width="80" Margin="4,0" Click="Ok_Click"/>

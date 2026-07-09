@@ -46,10 +46,12 @@ public partial class App : System.Windows.Application
         Coordinator = new GestureCoordinator(ConfigStore, Overlay, Tray.ShowNotification);
         Coordinator.Start();
         Tray.SetGesturesEnabled(Coordinator.CurrentConfig.Settings.GesturesEnabled);
+        Tray.SetVoiceEnabled(Coordinator.CurrentConfig.Settings.VoiceEnabled);
 
         Tray.ExitRequested += Shutdown;
         Tray.SettingsRequested += OpenSettings;
         Tray.GesturesToggled += on => Coordinator.SetGesturesEnabled(on);
+        Tray.VoiceToggled += on => Coordinator.SetVoiceEnabled(on);
 
         var waiter = new Thread(() =>
         {

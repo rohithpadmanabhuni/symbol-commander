@@ -10,4 +10,6 @@ public sealed class AppSettings
     public string TrailColor { get; set; } = "#3399FF";
     public double TrailThickness { get; set; } = 4.0;
     public bool StartWithWindows { get; set; }
+    public bool VoiceEnabled { get; set; } = true;
+    public double VoiceVolume { get; set; } = 0.8;
 }

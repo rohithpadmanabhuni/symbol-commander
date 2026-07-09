@@ -38,6 +38,22 @@
                     <CheckBox x:Name="EnabledCheck" Content="Gestures enabled" Margin="0,2"/>
                 </StackPanel>
             </GroupBox>
+            <GroupBox Header="Voice" Padding="8" Margin="0,8,0,0">
+                <StackPanel>
+                    <StackPanel Orientation="Horizontal">
+                        <CheckBox x:Name="VoiceCheck" Content="Voice feedback" VerticalAlignment="Center"/>
+                        <TextBlock Text="Volume:" VerticalAlignment="Center" Margin="16,0,0,0"/>
+                        <Slider x:Name="VoiceVolumeSlider" Width="140" Minimum="0" Maximum="1"
+                                TickFrequency="0.05" Margin="8,0"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" Margin="0,6,0,0">
+                        <Button Content="Import zip…" Width="100" Click="ImportZip_Click"/>
+                        <Button Content="Import folder…" Width="110" Margin="6,0" Click="ImportFolder_Click"/>
+                        <TextBlock x:Name="VoiceStatusLabel" VerticalAlignment="Center" Margin="10,0,0,0"
+                                   Foreground="Gray"/>
+                    </StackPanel>
+                </StackPanel>
+            </GroupBox>
             <GroupBox Header="Actions" Padding="8" Margin="0,8,0,0">
                 <DockPanel>
                     <StackPanel DockPanel.Dock="Right" Margin="8,0,0,0">

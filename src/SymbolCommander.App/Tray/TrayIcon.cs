@@ -8,15 +8,20 @@ public sealed class TrayIcon : IDisposable
 {
     private readonly NotifyIcon _icon;
     private readonly ToolStripMenuItem _enabledItem;
+    private readonly ToolStripMenuItem _voiceItem;
 
     public event Action? SettingsRequested;
     public event Action? ExitRequested;
     public event Action<bool>? GesturesToggled;
+    public event Action<bool>? VoiceToggled;
 
     public TrayIcon()
     {
         _enabledItem = new ToolStripMenuItem("Gestures enabled") { Checked = true, CheckOnClick = true };
         _enabledItem.CheckedChanged += (_, _) => GesturesToggled?.Invoke(_enabledItem.Checked);
+
+        _voiceItem = new ToolStripMenuItem("Voice enabled") { Checked = true, CheckOnClick = true };
+        _voiceItem.CheckedChanged += (_, _) => VoiceToggled?.Invoke(_voiceItem.Checked);
 
         var settings = new ToolStripMenuItem("Settings…");
         settings.Click += (_, _) => SettingsRequested?.Invoke();
@@ -26,7 +31,7 @@ public sealed class TrayIcon : IDisposable
 
         var menu = new ContextMenuStrip();
         menu.Items.AddRange(new ToolStripItem[]
-            { _enabledItem, new ToolStripSeparator(), settings, new ToolStripSeparator(), exit });
+            { _enabledItem, _voiceItem, new ToolStripSeparator(), settings, new ToolStripSeparator(), exit });
 
         _icon = new NotifyIcon
         {
@@ -39,6 +44,8 @@ public sealed class TrayIcon : IDisposable
     }
 
     public void SetGesturesEnabled(bool on) => _enabledItem.Checked = on;
+
+    public void SetVoiceEnabled(bool on) => _voiceItem.Checked = on;
 
     public void ShowNotification(string title, string message, bool warning = false) =>
         _icon.ShowBalloonTip(3000, title, message, warning ? ToolTipIcon.Warning : ToolTipIcon.Info);

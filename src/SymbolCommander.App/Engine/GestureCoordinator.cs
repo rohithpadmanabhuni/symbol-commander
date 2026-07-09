@@ -2,6 +2,7 @@ using System.Windows;
 using SymbolCommander.App.Execution;
 using SymbolCommander.App.Interop;
 using SymbolCommander.App.Overlay;
+using SymbolCommander.App.Voice;
 using SymbolCommander.Core.Actions;
 using SymbolCommander.Core.Config;
 using SymbolCommander.Core.Engine;
@@ -47,12 +48,14 @@ public sealed class GestureCoordinator : IDisposable
 
     public AppConfig CurrentConfig { get { lock (_gate) return _config; } }
     public SymbolCatalog Catalog { get { lock (_gate) return _catalog; } }
+    public VoiceService Voice { get; }
 
     public GestureCoordinator(ConfigStore store, OverlayWindow overlay, Action<string, string, bool> notify)
     {
         _store = store;
         _overlay = overlay;
         _notify = notify;
+        Voice = new VoiceService(System.IO.Path.Combine(store.Directory, "voice"), notify);
         _hookHost = new HookHost(_mouseHook, _keyboardHook, () => _engine.State == EngineState.Idle);
 
         _executor.ActionFailed += msg => OnUi(() => _notify("Action failed", msg, true));
@@ -75,6 +78,8 @@ public sealed class GestureCoordinator : IDisposable
     {
         ApplyConfig(_store.Load(), _store.LoadCustomSymbols());
         _hookHost.Start();
+        var settings = CurrentConfig.Settings;
+        if (settings.VoiceEnabled) Voice.PlayStartup(settings.VoiceVolume);
     }
 
     public void ApplyConfig(AppConfig config, List<CustomSymbol> customs)
@@ -116,6 +121,13 @@ public sealed class GestureCoordinator : IDisposable
     {
         AppConfig config;
         lock (_gate) { _config.Settings.GesturesEnabled = on; config = _config; }
+        _store.Save(config);
+    }
+
+    public void SetVoiceEnabled(bool on)
+    {
+        AppConfig config;
+        lock (_gate) { _config.Settings.VoiceEnabled = on; config = _config; }
         _store.Save(config);
     }
 
@@ -202,12 +214,16 @@ public sealed class GestureCoordinator : IDisposable
         Dictionary<string, ActionDefinition> bindings;
         double threshold;
         SymbolCatalog catalog;
+        bool voiceOn;
+        double voiceVolume;
         lock (_gate)
         {
             templates = _activeTemplates;
             bindings = _bindingBySymbol;
             threshold = _config.Settings.Sensitivity;
             catalog = _catalog;
+            voiceOn = _config.Settings.VoiceEnabled;
+            voiceVolume = _config.Settings.VoiceVolume;
         }
 
         var result = ProtractorRecognizer.Recognize(stroke, templates, threshold);
@@ -215,6 +231,7 @@ public sealed class GestureCoordinator : IDisposable
         {
             _overlay.EndTrailRecognized($"{catalog.NameOf(result.SymbolId!)}  →  {action.Name}");
             _executor.Execute(action);
+            if (voiceOn) Voice.PlayForAction(action, voiceVolume);
         }
         else
         {
